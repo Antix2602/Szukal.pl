@@ -5,34 +5,27 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
-API_KEY = 'AIzaSyCbsnjQi_xONy2AQzACwQoy1ypv4nypCTo'
-CX = '82c12589690c04d0e'
+API_KEY = "AIzaSyCbsnjQi_xONy2AQzACwQoy1ypv4nypCTo"
+CX = "82c12589690c04d0e"
 
-@app.route('/search', methods=['POST'])
+@app.route("/search")
 def search():
-    data = request.get_json()
-    query = data.get('q', '')
+    query = request.args.get("q")
     if not query:
-        return jsonify({'error': 'Brak zapytania'}), 400
+        return jsonify({"error": "Brak zapytania"}), 400
 
-    url = 'https://www.googleapis.com/customsearch/v1'
-    params = {
-        'key': API_KEY,
-        'cx': CX,
-        'q': query,
-        'num': 10,
-        'lr': 'lang_pl'  # wyniki po polsku
-    }
+    url = f"https://www.googleapis.com/customsearch/v1?q={query}&key={API_KEY}&cx={CX}"
+    response = requests.get(url)
 
-    try:
-        response = requests.get(url, params=params, timeout=10)
-        response.raise_for_status()
+    if response.status_code == 200:
         return jsonify(response.json())
-    except requests.exceptions.RequestException as e:
-        return jsonify({'error': 'Błąd pobierania wyników', 'details': str(e)}), 500
+    else:
+        return jsonify({"error": "Błąd pobierania wyników"}), 500
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000, debug=True)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+
 
 
 
