@@ -1,0 +1,2 @@
+# Szukal.pl
+sssss
