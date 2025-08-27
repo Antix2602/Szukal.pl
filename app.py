@@ -21,13 +21,19 @@ def search():
         'cx': CX,
         'q': query,
         'num': 10,
-        'lr': 'lang_pl'
+        'lr': 'lang_pl'  # wyniki po polsku
     }
-    resp = requests.get(url, params=params)
-    return jsonify(resp.json())
+
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        return jsonify(response.json())
+    except requests.exceptions.RequestException as e:
+        return jsonify({'error': 'Błąd pobierania wyników', 'details': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(host='0.0.0.0', port=10000, debug=True)
+
 
 
 
